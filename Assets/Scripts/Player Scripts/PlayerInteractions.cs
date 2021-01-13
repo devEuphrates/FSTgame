@@ -9,8 +9,11 @@ public class PlayerInteractions : MonoBehaviour
     public static PlayerInteractions Instance;
 
     public bool disabled = false;
-    private Camera cam;
+    public Camera cam;
     private InputsManager Imanager;
+
+    // Events
+    public event EventHandler<PlayerInteractInfo> onPlayerInteract;
 
     [Header("Layer Masks")]
     public LayerMask gridLayerMask;
@@ -59,44 +62,13 @@ public class PlayerInteractions : MonoBehaviour
         {
             if (hit.transform.gameObject.layer == 7)
             {
-                var segs = RoomBuilder.Instance.GetWallSegmentAndFriendFromInsID(hit.transform.gameObject.GetInstanceID());
-                WallSegment seg = segs.segment;
-                WallSegment friend = segs.friend;
-
-                List<Vector3> holeIn = new List<Vector3>();
-                List<Vector3> holeOut = new List<Vector3>();
-
-                Vector3 p1 = new Vector3();
-                p1 =  Quaternion.Euler(0f, 90f, 0f) * hit.normal + hit.point;
-                p1.y = 1.5f;
-                holeOut.Add(p1);
-
-                Vector3 p2 = new Vector3();
-                p2 = Quaternion.Euler(0f, -90f, 0f) * hit.normal + hit.point;
-                p2.y = 1.5f;
-                holeOut.Add(p2);
-
-                Vector3 p3 = new Vector3();
-                p3 = Quaternion.Euler(0f, -90f, 0f) * hit.normal + hit.point;
-                p3.y = 0.5f;
-                holeOut.Add(p3);
-
-                Vector3 p4 = new Vector3();
-                p4 = Quaternion.Euler(0f, 90f, 0f) * hit.normal + hit.point;
-                p4.y = 0.5f;
-                holeOut.Add(p4);
-
-                seg.AddHole(holeOut);
-                seg.UpdateMesh();
-
-                friend.AddHole(holeOut);
-                friend.UpdateMesh();
+                PlayerInteractInfo inInfo = new PlayerInteractInfo(hit, InteractionType.WallSelect);
+                onPlayerInteract?.Invoke(this, inInfo);
             }
             else if (hit.transform.gameObject.layer == 6)
             {
-                Vector3 gridPos = GridHandler.Instance.GetClosestGridPoint(hit.point);
-                gridPos.y = gridPos.y + 0.05f;
-                addedPoints.Add(gridPos);
+                PlayerInteractInfo inInfo = new PlayerInteractInfo(hit, InteractionType.GridSelect);
+                onPlayerInteract?.Invoke(this, inInfo);
             }
         }
     }
@@ -105,5 +77,19 @@ public class PlayerInteractions : MonoBehaviour
     {
         RoomBuilder.Instance.CreateRoom(addedPoints.ToArray());
         addedPoints.Clear();
+    }
+}
+
+public enum InteractionType { GridSelect, WallSelect}
+
+public class PlayerInteractInfo
+{
+    public RaycastHit hitInfo { get; set; }
+    public InteractionType typeInfo { get; set; }
+
+    public PlayerInteractInfo(RaycastHit hit, InteractionType type)
+    {
+        hitInfo = hit;
+        typeInfo = type;
     }
 }

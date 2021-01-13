@@ -12,6 +12,9 @@ public class RoomBuilder : MonoBehaviour
     public Transform roomsParent;
     public GameObject emptyReference;
     public GameObject segmentReference;
+    public GameObject pointRef;
+
+    private List<Vector3> pts = new List<Vector3>();
 
     private GameObject CreatedRoom = null;
     [Header("Attirbutes")]
@@ -33,6 +36,15 @@ public class RoomBuilder : MonoBehaviour
     private void Start()
     {
         initId = 0;
+    }
+
+    private void Update()
+    {
+        for (int i = 0; i < pts.Count; i++)
+        {
+            int nid = (i == pts.Count - 1) ? 0 : i + 1;
+            Debug.DrawLine(pts[i], pts[nid], Color.white);
+        }
     }
 
     public void CreateRoom(Vector3[] points, float height = 2f, float thickness = 0.1f)
@@ -120,7 +132,7 @@ public class RoomBuilder : MonoBehaviour
             midHighPoint.y += height;
             outHighPoint.y += height;
 
-            Debug.DrawLine(points[i] + mid * ntck, midHighPoint, Color.black);
+            pts.Add(points[i] + mid * ntck);
 
             verts_in_down.Add(points[i] + mid * ntck);
             verts_in_up.Add(midHighPoint);
@@ -168,9 +180,8 @@ public class RoomBuilder : MonoBehaviour
             Poly2Mesh.Polygon polIn = new Poly2Mesh.Polygon();
             Poly2Mesh.Polygon polLid = new Poly2Mesh.Polygon();
 
-            polOut.outside = outWalls[i].verts;
-            polIn.outside = inWalls[i].verts;
-            polLid.outside = lidWalls[i].verts;
+            Vector2[] UVs = new Vector2[4] {new Vector2(0f, 1f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 0f)};
+
 
             Vector3 wallPos = inWalls[i].verts[0] + (Vector3.Distance(inWalls[i].verts[0], inWalls[i].verts[3]) * 0.5f) * (outWalls[i].verts[3] - inWalls[i].verts[0]).normalized;
             Vector3 normalizedCenterPoint = Quaternion.Euler(0f, 90f, 0f) * (inWalls[i].verts[3] - inWalls[i].verts[0]).normalized;
@@ -180,34 +191,43 @@ public class RoomBuilder : MonoBehaviour
             totalWall.name = "WALL - " + i.ToString();
             totalWall.transform.LookAt(cent);
 
-            polIn.CalcPlaneNormal(normalizedCenterPoint);
-            inWalls[i].normal = normalizedCenterPoint;
-            polOut.CalcPlaneNormal(-1 * normalizedCenterPoint);
-            outWalls[i].normal = -1 * normalizedCenterPoint;
-            polLid.CalcPlaneNormal(transform.up);
-            lidWalls[i].normal = transform.up;
+            polOut.outside = SegmentToZero(outWalls[i]);
+            polIn.outside = SegmentToZero(inWalls[i]);
+            polLid.outside = lidWalls[i].verts;
+
+            //polIn.CalcPlaneNormal(normalizedCenterPoint);
+            //inWalls[i].normal = normalizedCenterPoint;
+            //polOut.CalcPlaneNormal(-1 * normalizedCenterPoint);
+            //outWalls[i].normal = -1 * normalizedCenterPoint;
+            //polLid.CalcPlaneNormal(transform.up);
+            //lidWalls[i].normal = transform.up;
 
             GameObject inOBJ = Instantiate(segmentReference, totalWall.transform);
             inWalls[i].objectInstance = inOBJ;
+            inOBJ.transform.position = inWalls[i].verts[0] + (inWalls[i].verts[3] - inWalls[i].verts[0]).normalized * (Vector3.Distance(inWalls[i].verts[0], inWalls[i].verts[3]) * 0.5f);
+            polIn.CalcPlaneNormal(new Vector3(0f, 0f, 1f)) ;
             inOBJ.GetComponent<MeshFilter>().mesh = Poly2Mesh.CreateMesh(polIn);
-            inOBJ.transform.position = inOBJ.transform.position - totalWall.transform.position;
-            inOBJ.transform.eulerAngles = inOBJ.transform.eulerAngles - totalWall.transform.eulerAngles;
+            inOBJ.GetComponent<MeshFilter>().mesh.uv = UVs;
             inOBJ.GetComponent<MeshCollider>().sharedMesh = inOBJ.GetComponent<MeshFilter>().mesh;
             inOBJ.name = "INSIDE";
 
-            GameObject outOBJ = Instantiate(segmentReference, totalWall.transform);
-            outWalls[i].objectInstance = outOBJ;
-            outOBJ.GetComponent<MeshFilter>().mesh = Poly2Mesh.CreateMesh(polOut);
-            outOBJ.transform.position = outOBJ.transform.position - totalWall.transform.position;
-            outOBJ.transform.eulerAngles = outOBJ.transform.eulerAngles - totalWall.transform.eulerAngles;
-            outOBJ.GetComponent<MeshCollider>().sharedMesh = outOBJ.GetComponent<MeshFilter>().mesh;
-            outOBJ.name = "OUTSIDE";
+            GameObject outObj = Instantiate(segmentReference, totalWall.transform);
+            outObj.transform.localEulerAngles = new Vector3(0f, 180f, 0f);
+            outWalls[i].objectInstance = outObj;
+            outObj.transform.position = outWalls[i].verts[0] + (outWalls[i].verts[3] - outWalls[i].verts[0]).normalized * (Vector3.Distance(outWalls[i].verts[0], outWalls[i].verts[3]) * 0.5f);
+            polOut.CalcPlaneNormal(new Vector3(0f, 0f, 1f));
+            outObj.GetComponent<MeshFilter>().mesh = Poly2Mesh.CreateMesh(polOut);
+            outObj.GetComponent<MeshFilter>().mesh.uv = UVs;
+            outObj.GetComponent<MeshCollider>().sharedMesh = outObj.GetComponent<MeshFilter>().mesh;
+            outObj.name = "OUTSIDE";
 
             GameObject lidOBJ = Instantiate(segmentReference, totalWall.transform);
             lidWalls[i].objectInstance = lidOBJ;
+            polLid.CalcPlaneNormal(new Vector3(0f, 1f, 0f));
             lidOBJ.GetComponent<MeshFilter>().mesh = Poly2Mesh.CreateMesh(polLid);
-            lidOBJ.transform.position = lidOBJ.transform.position - totalWall.transform.position;
-            lidOBJ.transform.eulerAngles = lidOBJ.transform.eulerAngles - totalWall.transform.eulerAngles;
+            lidOBJ.GetComponent<MeshFilter>().mesh.uv = UVs;
+            lidOBJ.transform.position = Vector3.zero;
+            lidOBJ.transform.eulerAngles = Vector3.zero;
             lidOBJ.GetComponent<MeshCollider>().sharedMesh = lidOBJ.GetComponent<MeshFilter>().mesh;
             lidOBJ.name = "TOP";
 
@@ -258,8 +278,20 @@ public class RoomBuilder : MonoBehaviour
     {
         if (roomIndx >= generatedRooms.Count || wallIndx >= generatedRooms[roomIndx].walls.Count) return;
     }
-}
 
+    public List<Vector3> SegmentToZero(WallSegment seg)
+    {
+        int mult = -1;
+        List<Vector3> newV3s = new List<Vector3>();
+        float len = Vector3.Distance(seg.verts[0], seg.verts[3]);
+        float height = seg.verts[1].y - seg.verts[0].y;
+        newV3s.Add(new Vector3(mult * len * 0.5f, 0f, 0f));
+        newV3s.Add(new Vector3(mult * len * 0.5f, height, 0f));
+        newV3s.Add(new Vector3(-mult * len * 0.5f, height, 0f));
+        newV3s.Add(new Vector3(-mult * len * 0.5f, 0f, 0f));
+        return newV3s;
+    }
+}
 public class Room
 {
     public List<Wall> walls;

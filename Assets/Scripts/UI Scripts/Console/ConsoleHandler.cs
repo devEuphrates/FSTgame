@@ -14,7 +14,7 @@ public class ConsoleHandler : MonoBehaviour
     private List<GameObject> logs = new List<GameObject>();
 
     [Header("References")]
-    [SerializeField]public List<CommandObject> commands = new List<CommandObject>();
+    [SerializeField] public List<CommandObject> commands = new List<CommandObject>();
     public InputField inputF;
     public GameObject console;
     public GameObject logHolder;
@@ -63,9 +63,19 @@ public class ConsoleHandler : MonoBehaviour
         if (!consoleState) return;
 
         string[] ins = inputF.text.ToLower().Split('.');
+        inputF.text = "";
         ICommand cmd = commands.FindLast(p => p.CommandName.ToLower() == ins[0]);
         string[] args = ins.Skip(1).ToArray();
-        if (cmd != null) cmd.ExecuteCommand(args);
+        if (cmd != null)
+        {
+            if (cmd.ExecuteCommand(args)) Debug.Log("Executed command: " + cmd.CommandName);
+            else
+            {
+                string err = "Could not execute command: " + cmd.CommandName;
+                Debug.LogError(err);
+                Log(err, Color.red);
+            }
+        }
     }
 
     public void Log(string text)

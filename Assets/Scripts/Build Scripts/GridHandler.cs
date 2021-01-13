@@ -9,7 +9,7 @@ public class GridHandler : MonoBehaviour
 
     public float gridSize = 1f;
     private MeshRenderer meshRenderer;
-    private bool gridStatus = false;
+    public bool gridStatus = false;
 
     private void Awake()
     {
@@ -44,5 +44,12 @@ public class GridHandler : MonoBehaviour
 
         Vector3 gridPosition = new Vector3((float)cX * gridSize, transform.position.y, (float)cZ * gridSize);
         return gridPosition;
+    }
+
+    public Vector3 PointOnGridHeight(Vector3 pos)
+    {
+        Vector3 newPos = pos;
+        newPos.y = transform.position.y;
+        return newPos;
     }
 }
