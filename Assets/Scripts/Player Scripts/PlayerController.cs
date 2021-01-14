@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
     private float rotateAmount;
     private GameObject cam;
 
-    private float maxHeight = 20f, minHeight = 3f;
-    private float yMove = 0f, wantedY = 20f;
+    public float maxDistance = 20f, minDistance = 5f;
+    private float yMove = 0f;
 
     private float scrollAmount = 0f;
     private bool sbPressed = false;
@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
         ia.Player.Rotate.canceled += _ => rotateAmount = 0;
         ia.Player.Levitate.performed += msg => yMove = msg.ReadValue<float>();
         ia.Player.Levitate.canceled += _ => yMove = 0f;
-        ia.Player.ScrollWheel.performed += msg => { scrollAmount = msg.ReadValue<float>(); MoveOnY(scrollAmount * Time.deltaTime * -1f * 50f); };
+        ia.Player.ScrollWheel.performed += msg => { scrollAmount = msg.ReadValue<float>(); MoveOnY(scrollAmount); };
         ia.Player.ScrollButton.performed += _ => { sbPressed = true; pressedLocation = Mouse.current.position.ReadValue(); };
         ia.Player.ScrollButton.canceled += _ => sbPressed = false;
     }
@@ -79,32 +79,39 @@ public class PlayerController : MonoBehaviour
     {
         if (!sbPressed) return;
 
-        Vector2 currentVector = Mouse.current.position.ReadValue() - pressedLocation;
-        float amt = currentVector.x / Screen.width * 200f;
-        RotatePlayer(amt);
+        Vector2 cur = Mouse.current.position.ReadValue();
+        Vector2 currentVector = cur - pressedLocation;
+        RotatePlayer(currentVector);
+        pressedLocation = cur;
     }
 
-    private void RotatePlayer(float amt)
+    private void RotatePlayer(Vector2 amt)
     {
-        if (amt == 0f) return;
-        transform.eulerAngles = transform.eulerAngles + new Vector3(0f, amt * Time.deltaTime, 0f);
-    }
-    private void MoveOnY(float amt)
-    {
-        if (amt == 0) return;
-        wantedY = Mathf.Clamp(cam.transform.position.y + amt * 20f * Time.deltaTime, minHeight, maxHeight);
-        float selX = 1f / Mathf.Sqrt(wantedY);
-
-        Vector3 wantedPos = new Vector3(0f, wantedY, -1 * (5f * selX + 10f));
-        cam.transform.localPosition = wantedPos;
+        if (amt == Vector2.zero) return;
+        float xAmt = (amt.x / Screen.width) * 360f;
+        float yAmt = (amt.y / Screen.height) * -360f;
+        float deg = Mathf.Rad2Deg * Vector3.Angle(new Vector3(0f, 0f, -1f), cam.transform.localPosition.normalized) / 90f;
+        yAmt = -Mathf.Clamp(-yAmt, deg - 50f, deg - 5f);
+        transform.eulerAngles = transform.eulerAngles + new Vector3(0f, xAmt, 0f);
+        cam.transform.RotateAround(transform.position, transform.right, yAmt);
         cam.transform.LookAt(transform);
     }
 
-    private void LateUpdate()
+    private void MoveOnY(float amt)
+    {
+        float mv = amt * Time.deltaTime * 6f;
+        Vector3 newPos = Vector3.MoveTowards(cam.transform.localPosition, Vector3.zero, mv);
+        float newDis = Vector3.Distance(newPos, Vector3.zero);
+        if (newDis > maxDistance) newPos = cam.transform.localPosition.normalized * maxDistance;
+        else if (newDis < minDistance) newPos = cam.transform.localPosition.normalized * minDistance;
+        else if (newPos.y <= 0f) { newPos.y *= -1; newPos = cam.transform.localPosition.normalized * minDistance; }
+        cam.transform.localPosition = newPos;
+    }
+
+    private void Update()
     {
         HandleMouse();
         MovePlayerOnXZ();
-        RotatePlayer(rotateAmount * 100f);
         MoveOnY(yMove);
     }
 }
