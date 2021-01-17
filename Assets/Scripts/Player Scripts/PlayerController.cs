@@ -69,8 +69,8 @@ public class PlayerController : MonoBehaviour
     {
         if (moveVector == Vector2.zero) return;
         if (moveVector.magnitude > 1f) moveVector = moveVector.normalized;
-        float xMove = moveVector.x * movementSpeed * Time.deltaTime;
-        float zMove = moveVector.y * movementSpeed * Time.deltaTime;
+        float xMove = moveVector.x * movementSpeed * Time.unscaledDeltaTime;
+        float zMove = moveVector.y * movementSpeed * Time.unscaledDeltaTime;
 
         transform.Translate(xMove, 0, zMove);
     }
@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveOnY(float amt)
     {
-        float mv = amt * Time.deltaTime * 6f;
+        float mv = amt * Time.unscaledDeltaTime * 6f;
         Vector3 newPos = Vector3.MoveTowards(cam.transform.localPosition, Vector3.zero, mv);
         float newDis = Vector3.Distance(newPos, Vector3.zero);
         if (newDis > maxDistance) newPos = cam.transform.localPosition.normalized * maxDistance;
@@ -113,5 +113,6 @@ public class PlayerController : MonoBehaviour
         HandleMouse();
         MovePlayerOnXZ();
         MoveOnY(yMove);
+        RotatePlayer(new Vector2(rotateAmount, 0f));
     }
 }

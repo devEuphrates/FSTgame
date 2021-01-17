@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: ToggleBuildMode
   m_EditorClassIdentifier: 
   commandName: build
+  aliases:
+  - bu

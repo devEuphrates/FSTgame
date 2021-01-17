@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class BuildMode : MonoBehaviour
@@ -99,7 +100,7 @@ public class BuildMode : MonoBehaviour
             {
                 Ray castedRay = pis.cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-                if (Physics.Raycast(castedRay, out RaycastHit hit, Mathf.Infinity, pis.gridLayerMask))
+                if (Physics.Raycast(castedRay, out RaycastHit hit, Mathf.Infinity, pis.gridLayerMask) && !EventSystem.current.IsPointerOverGameObject())
                 {
                     Vector3 wantedPoint = (gh.gridStatus) ? gh.GetClosestGridPoint(hit.point) : gh.PointOnGridHeight(hit.point);
                     GameObject last = generatedPlaceholders[generatedPlaceholders.Count - 1];
@@ -121,8 +122,10 @@ public class BuildMode : MonoBehaviour
 
     private bool CheckWallBuildable(Vector3 point1, Vector3 point2)
     {
+        float dis = Vector3.Distance(point1, point2);
+        if (dis < 1f) return false;
         Ray checkRay = new Ray(point1, (point2 - point1));
-        bool canDo = !Physics.Raycast(checkRay, out RaycastHit checkHit, Vector3.Distance(point1, point2), checkLayers);
+        bool canDo = !Physics.Raycast(checkRay, out RaycastHit checkHit, - 0.2f, checkLayers);
         return canDo;
     }
 

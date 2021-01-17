@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerInteractions : MonoBehaviour
@@ -60,16 +61,11 @@ public class PlayerInteractions : MonoBehaviour
 
         if (Physics.Raycast(castedRay, out RaycastHit hit, Mathf.Infinity, gridLayerMask))
         {
-            if (hit.transform.gameObject.layer == 7)
-            {
-                PlayerInteractInfo inInfo = new PlayerInteractInfo(hit, InteractionType.WallSelect);
-                onPlayerInteract?.Invoke(this, inInfo);
-            }
-            else if (hit.transform.gameObject.layer == 6)
-            {
-                PlayerInteractInfo inInfo = new PlayerInteractInfo(hit, InteractionType.GridSelect);
-                onPlayerInteract?.Invoke(this, inInfo);
-            }
+            PlayerInteractInfo inInfo = new PlayerInteractInfo(hit, InteractionType.GridSelect);
+            if (hit.transform.gameObject.layer == 7) inInfo = new PlayerInteractInfo(hit, InteractionType.WallSelect);
+            else if (hit.transform.gameObject.layer == 6) inInfo = new PlayerInteractInfo(hit, InteractionType.GridSelect);
+
+            if(!EventSystem.current.IsPointerOverGameObject()) onPlayerInteract?.Invoke(this, inInfo);
         }
     }
 

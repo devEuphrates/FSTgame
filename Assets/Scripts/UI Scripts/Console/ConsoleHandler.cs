@@ -40,6 +40,8 @@ public class ConsoleHandler : MonoBehaviour
         {
             PlayerController.Instance.DisableControls();
             PlayerInteractions.Instance.DisableInteractions();
+            inputF.Select();
+            inputF.ActivateInputField();
         }
         else
         {
@@ -64,8 +66,9 @@ public class ConsoleHandler : MonoBehaviour
 
         string[] ins = inputF.text.ToLower().Split('.');
         inputF.text = "";
-        ICommand cmd = commands.FindLast(p => p.CommandName.ToLower() == ins[0]);
+        ICommand cmd = commands.FindLast(p => p.CommandName.ToLower() == ins[0] || p.Aliases.Exists(q => q.ToLower() == ins[0]));
         string[] args = ins.Skip(1).ToArray();
+        
         if (cmd != null)
         {
             if (cmd.ExecuteCommand(args)) Debug.Log("Executed command: " + cmd.CommandName);
@@ -76,6 +79,15 @@ public class ConsoleHandler : MonoBehaviour
                 Log(err, Color.red);
             }
         }
+        else
+        {
+            string err = "No such command.";
+            Debug.LogError(err);
+            Log(err, Color.red);
+        }
+
+        inputF.Select();
+        inputF.ActivateInputField();
     }
 
     public void Log(string text)

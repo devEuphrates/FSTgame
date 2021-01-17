@@ -35,6 +35,14 @@ public class CMD_BuildMode : CommandObject
                 }
                 else return false;
             }
+            else if (args[0] == "on")
+            {
+                return true;
+            }
+            else if (args[0] == "off")
+            {
+                return true;
+            }
             else return false;
         }
         else return false;
