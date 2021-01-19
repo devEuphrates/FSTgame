@@ -6,8 +6,8 @@
 A management game where you build your dream hotel and try to keep your customers happy and well fed.
 
 ## How Am I Making It?
-I am a single dev and I am doing everything by myself. I mostly use open source software and try to keep the  
-cost at minimum. I try not to out-source anything but because of time issues I take some assets(royalty free)  
+I am a single dev and I am doing everything by myself. I mostly use open source software and try to keep the cost at minimum.  
+I try not to out-source anything but because of time issues I take some assets(royalty free)  
 from the internet.  
 
 ### Programs I Am Using
