@@ -22,10 +22,12 @@ public class RoomBuilder : MonoBehaviour
     [Range(0.01f, 1f)]
     public float wallThickness = 0.1f;
     public float wallHeight = 2f;
+    public Material floorMat;
+    public Material outMat;
 
     private List<Room> generatedRooms = new List<Room>();
 
-    public int initId = 0;
+    private int initId = 0;
 
     private void Awake()
     {
@@ -47,7 +49,7 @@ public class RoomBuilder : MonoBehaviour
         }
     }
 
-    public void CreateRoom(Vector3[] points, float height = 2f, float thickness = 0.1f)
+    public void CreateRoom(Vector3[] points)
     {
         if (points.Length < 3) return;
 
@@ -76,7 +78,7 @@ public class RoomBuilder : MonoBehaviour
 
         Vector3 vec1_n = (points[selectedIndex] - points[0]).normalized;
         bool isInverted = Vector3.Dot(transform.up, Vector3.Cross(vec1_2, vec1_n)) < 0;
-        if (isInverted) thickness *= -1;
+        if (isInverted) wallThickness *= -1;
 
         GameObject newRoom = Instantiate(emptyReference, Vector3.zero, Quaternion.identity, roomsParent);
         newRoom.name = "ROOM - " + initId++;
@@ -112,8 +114,8 @@ public class RoomBuilder : MonoBehaviour
             float angle = Vector3.Angle(vtp, mid);
             float sin = Mathf.Sin(Mathf.Deg2Rad * angle);
             sin = (sin == 0) ? 1 : sin;
-            float ntck = thickness / sin;
-            ntck = (ntck <= 0) ? thickness : ntck;
+            float ntck = wallThickness / sin;
+            ntck = (ntck <= 0) ? wallThickness : ntck;
 
 
 
@@ -129,8 +131,8 @@ public class RoomBuilder : MonoBehaviour
 
             Vector3 midHighPoint = points[i] + mid * ntck;
             Vector3 outHighPoint = points[i];
-            midHighPoint.y += height;
-            outHighPoint.y += height;
+            midHighPoint.y += wallHeight;
+            outHighPoint.y += wallHeight;
 
             pts.Add(points[i] + mid * ntck);
 
@@ -219,6 +221,7 @@ public class RoomBuilder : MonoBehaviour
             outObj.GetComponent<MeshFilter>().mesh = Poly2Mesh.CreateMesh(polOut);
             outObj.GetComponent<MeshFilter>().mesh.uv = UVs;
             outObj.GetComponent<MeshCollider>().sharedMesh = outObj.GetComponent<MeshFilter>().mesh;
+            outObj.GetComponent<MeshRenderer>().material = outMat;
             outObj.name = "OUTSIDE";
 
             GameObject lidOBJ = Instantiate(segmentReference, totalWall.transform);
@@ -236,6 +239,7 @@ public class RoomBuilder : MonoBehaviour
         }
 
         GameObject floorOBJ = Instantiate(segmentReference, newRoom.transform);
+        floorOBJ.GetComponent<MeshRenderer>().material = floorMat;
         wlBottom.objectInstance = floorOBJ;
         Poly2Mesh.Polygon floorPoly = new Poly2Mesh.Polygon();
         floorPoly.outside = wlBottom.verts;

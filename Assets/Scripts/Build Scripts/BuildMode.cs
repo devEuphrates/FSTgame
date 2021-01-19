@@ -109,10 +109,10 @@ public class BuildMode : MonoBehaviour
                     else
                         unbuildable = !CheckWallBuildable(wantedPoint, currentPoints[currentPoints.Count - 1]);
 
-                    if (unbuildable && last.GetComponentInChildren<MeshRenderer>().material.GetColor("Color_01a6a682d2684805bc6d06ecbaf6fb7b") != Color.red)
-                        last.GetComponentInChildren<MeshRenderer>().material.SetColor("Color_01a6a682d2684805bc6d06ecbaf6fb7b", Color.red);
-                    else if (!unbuildable && last.GetComponentInChildren<MeshRenderer>().material.GetColor("Color_01a6a682d2684805bc6d06ecbaf6fb7b") != Color.gray)
-                        last.GetComponentInChildren<MeshRenderer>().material.SetColor("Color_01a6a682d2684805bc6d06ecbaf6fb7b", Color.gray);
+                    if (unbuildable && last.GetComponentInChildren<MeshRenderer>().material.GetColor("Color_Second") != Color.red)
+                        last.GetComponentInChildren<MeshRenderer>().material.SetColor("Color_Second", Color.red);
+                    else if (!unbuildable && last.GetComponentInChildren<MeshRenderer>().material.GetColor("Color_Second") != Color.gray)
+                        last.GetComponentInChildren<MeshRenderer>().material.SetColor("Color_Second", Color.gray);
 
                     SetLastPH(wantedPoint);
                 }
