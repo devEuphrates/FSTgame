@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -91,7 +90,7 @@ public class PlayerController : MonoBehaviour
         float xAmt = (amt.x / Screen.width) * 360f;
         float yAmt = (amt.y / Screen.height) * -360f;
         float deg = Mathf.Rad2Deg * Vector3.Angle(new Vector3(0f, 0f, -1f), cam.transform.localPosition.normalized) / 90f;
-        yAmt = -Mathf.Clamp(-yAmt, deg - 50f, deg - 5f);
+        yAmt = -Mathf.Clamp(-yAmt, deg - 50f, deg - 2f);
         transform.eulerAngles = transform.eulerAngles + new Vector3(0f, xAmt, 0f);
         cam.transform.RotateAround(transform.position, transform.right, yAmt);
         cam.transform.LookAt(transform);

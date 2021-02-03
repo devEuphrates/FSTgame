@@ -34,7 +34,13 @@ public class GridHandler : MonoBehaviour
     {
         float sz = newSize >= 0f ? newSize : 0f;
         gridSize = sz;
-        meshRenderer.material.SetFloat("_GridSize", sz);
+        meshRenderer.material.SetFloat("_Tiling", 1f / sz);
+    }
+
+    public void MultiplyGridSize(float multiplier)
+    {
+        gridSize *= multiplier;
+        meshRenderer.material.SetFloat("_Tiling", 1f / gridSize);
     }
 
     public Vector3 GetClosestGridPoint(Vector3 pos)

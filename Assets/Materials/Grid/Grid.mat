@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8893377856181095835
+--- !u!114 &-2301845448844602463
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,13 +20,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GRID
-  m_Shader: {fileID: 4800000, guid: 9e06e5bc1355ee74fbda4d0476393b10, type: 3}
+  m_Name: Grid
+  m_Shader: {fileID: -6465566751694194690, guid: fef56be96fb165842b5669f6e1393029, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -57,7 +57,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 97d48d0dfe1c88b4dbacb3327d976e48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -89,9 +89,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Alpha: 1
+    - Vector1_40d9108eadc8471dbfdc927b670d6bc3: 1
+    - Vector1_c88aa2b0fb304eb8950b3fe2a8371d5f: 1
     - _AlphaClip: 0
     - _Blend: 0
+    - _Blending: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -104,9 +106,6 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Grid2Size: 0
-    - _Grid3Size: 0
-    - _GridSize: 1
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -117,6 +116,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
+    - _Tiling: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:

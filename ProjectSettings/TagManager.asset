@@ -11,12 +11,12 @@ TagManager:
   - 
   - Water
   - UI
-  - Grid
-  - RoomPart
   - Ground
-  - 
-  - 
-  - 
+  - Grid
+  - Room Segment
+  - Wall Placeholder
+  - Room Floor
+  - Lids
   - 
   - 
   - 
