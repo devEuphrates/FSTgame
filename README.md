@@ -11,7 +11,7 @@ I am a single dev and I am doing everything by myself. I mostly use open source 
 cost at minimum. I try not to out-source anything but because of time issues I take some assets(royalty free)  
 from the internet.
 
-### Programs I Am Using
+### Programs I'm Using
 * Engine: [Unity][unity]
 * 3D: [Blender][blender]
 * 2D: [GIMP][gimp]
@@ -19,7 +19,7 @@ from the internet.
 ## Main Mechanics
 The game is all about giving players every tool they need to create their own building and ecosystems and making them manage their 
 resources carefuly while making sure their customers are happy and staff is paid. Players must make sure that their customers are 
-happy when they are leaving because they can leave reviews about your hotel and these reviews will effect your buisness depending on
+happy when they are leaving because they can leave reviews about their hotels and these reviews will effect their buisnes depending on
 that customers social presence.  
 ![Here is an early example for build system][savedgif]
 
