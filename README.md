@@ -2,7 +2,7 @@
 [blender]: https://www.blender.org
 [gimp]: https://www.gimp.org
 [savedgif]: https://github.com/devEuphrates/FSTgame/blob/master/gif1.gif
-# Five Stars Tycoon _A Hotel Management Game_
+# Five Stars Tycoon ##_A Hotel Management Game_
 
 A management game where you build your dream hotel and try to keep your customers happy and well fed.
 
